@@ -12,8 +12,9 @@ use anchor_lang::error::AnchorError;
 
 mod constants;
 mod state;
+mod errors;
 
-use crate::{constants::*, state::*};
+use crate::{constants::*, state::*, errors::*};
 
 declare_id!("3XuNmJEHjuk5Vo7U6fAPp1vJekyW2GJsSmWBWkLjnbyK");
 
@@ -252,26 +253,6 @@ pub trait ChangableToken {
 #[account]
 pub struct VerifyingKey {
     pub key: Vec<u8>,
-}
-
-#[error_code]
-pub enum CustomError {
-    #[msg("Vote is already active.")]
-    VoteActive,
-    #[msg("Vote is not active.")]
-    VoteInactive,
-    #[msg("Insufficient balance.")]
-    InsufficientBalance,
-    #[msg("Voting time has not ended or minimum votes not reached.")]
-    VotingTime,
-    #[msg("User has already voted.")]
-    AlreadyVoted,
-    #[msg("Proof deserialization failed.")]
-    ProofDeserializationFailed,
-    #[msg("Invalid public input.")]
-    InvalidPublicInput,
-    #[msg("Proof verification failed.")]
-    ProofVerificationFailed,
 }
 
 fn get_token_balance(account: &AccountInfo) -> Result<u64> {
