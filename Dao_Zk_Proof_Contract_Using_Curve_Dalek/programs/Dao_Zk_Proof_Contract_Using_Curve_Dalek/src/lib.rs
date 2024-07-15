@@ -12,10 +12,11 @@ use curve25519_dalek::scalar::Scalar;
 use rand::rngs::OsRng;
 
 pub mod zk_proof;
+pub mod constants;
+pub mod state;
+pub mod errors;
 
-use crate::{constants::*, zk_proof::*};
-
-mod constants;
+use crate::{constants::*, state::*, errors::*, zk_proof::*};
 
 declare_id!("3XuNmJEHjuk5Vo7U6fAPp1vJekyW2GJsSmWBWkLjnbyK");
 
@@ -127,23 +128,6 @@ pub mod dao_voting {
     }
 }
 
-#[account]
-pub struct Election {
-    pub id: u64, // Unique identifier for the proposal
-    pub token: Pubkey,
-    pub proposal_voting: String,
-    pub value: String,
-    pub additional_value: String,
-    pub current: i64, // Modified to i64 to accommodate negative votes
-    pub number_of_votes: u64,
-    pub vote_active: bool,
-    pub time: i64,
-    pub min_votes: u64,
-    pub count: u64,
-    pub creator: Pubkey, // The address of the proposal creator
-    pub voters: Vec<Pubkey>, // List of voters
-}
-
 #[derive(Accounts)]
 pub struct NewPolling<'info> {
     #[account(
@@ -242,13 +226,6 @@ pub struct CloseElection<'info> {
     pub changable_token_account: Account<'info, ChangableTokenAccount>,
 }
 
-#[account]
-pub struct ChangableTokenAccount {
-    pub name: String,
-    pub symbol: String,
-    pub balance: u64,
-}
-
 impl ChangableToken for ChangableTokenAccount {
     fn change_symbol(&mut self, symbol: String) -> ProgramResult {
         self.symbol = symbol;
@@ -274,28 +251,6 @@ pub trait ChangableToken {
 #[account]
 pub struct VerifyingKey {
     pub key: Vec<u8>,
-}
-
-#[error_code]
-pub enum CustomError {
-    #[msg("Vote is already active.")]
-    VoteActive,
-    #[msg("Vote is not active.")]
-    VoteInactive,
-    #[msg("Insufficient balance.")]
-    InsufficientBalance,
-    #[msg("Voting time has not ended or minimum votes not reached.")]
-    VotingTime,
-    #[msg("User has already voted.")]
-    AlreadyVoted,
-    #[msg("Proof deserialization failed.")]
-    ProofDeserializationFailed,
-    #[msg("Invalid public input.")]
-    InvalidPublicInput,
-    #[msg("Proof verification failed.")]
-    ProofVerificationFailed,
-    #[msg("Invalid Proof")]
-    InvalidProof,
 }
 
 fn get_token_balance(account: &AccountInfo) -> Result<u64> {
