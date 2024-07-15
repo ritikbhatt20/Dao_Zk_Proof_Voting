@@ -1,4 +1,4 @@
-use super::elgamal::{ElGamalPubkey, ElGamalCiphertext};
+use super::elgamal_file::{ElGamalPubkey, ElGamalCiphertext};
 use anchor_lang::prelude::*;
 use curve25519_dalek::ristretto::{RistrettoPoint, CompressedRistretto};
 use curve25519_dalek::scalar::Scalar;

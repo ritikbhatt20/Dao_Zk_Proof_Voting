@@ -5,10 +5,12 @@ use solana_program::account_info::AccountInfo;
 use solana_program::program_pack::Pack;
 use spl_token::state::Account as SplTokenAccount;
 use bellman::groth16::{Proof, prepare_verifying_key, verify_proof};
-use bls12_381::{Bls12, Scalar};
 use std::str::FromStr;
 use bellman::groth16::VerifyingKey as GrothVerifyingKey;
 use anchor_lang::error::AnchorError;
+use curve25519_dalek::scalar::Scalar;
+use rand::rngs::OsRng;
+
 pub mod zk_proof;
 
 use crate::{constants::*, zk_proof::*};
@@ -61,7 +63,7 @@ pub mod dao_voting {
         let ciphertext = zk_proof::elgamal_file::perform_encryption(vote, &public_key);
     
         // Generate the vote proof
-        let random_scalar = zk_proof::elgamal_file::Scalar::random(&mut zk::elgamal::OsRng); // Use the correct randomness
+        let random_scalar = Scalar::random(&mut rand::rngs::OsRng);  // Use the randomness
         let proof = create_vote_proof(vote, random_scalar, &public_key);
     
         // Verify the proof before adding it
