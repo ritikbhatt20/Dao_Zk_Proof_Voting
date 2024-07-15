@@ -77,6 +77,12 @@ pub mod dao_voting {
         }
         election.number_of_votes += 1;
         election.voters.push(ctx.accounts.authority.key()); // Add voter to the list
+
+        // Create or update user account with reward points
+        let user = &mut ctx.accounts.user;
+        user.pubkey = ctx.accounts.authority.key();
+        user.reward_points += 1; // Award 1 reward point for voting
+        
         Ok(())
     }
     
@@ -172,6 +178,14 @@ pub struct Vote<'info> {
         bump,
     )]
     pub changable_token_account: Account<'info, ChangableTokenAccount>,
+    #[account(
+        init_if_needed,
+        payer = authority,
+        space = 8 + 32 + 8,
+        seeds = [USER_SEED.as_bytes(), authority.key().as_ref()],
+        bump
+    )]
+    pub user: Account<'info, User>,
     pub verifying_key: Account<'info, VerifyingKey>,
     pub system_program: Program<'info, System>,
 }
