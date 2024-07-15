@@ -75,7 +75,7 @@ This folder contains the smart contract implementation for the DAO voting progra
 
 ### License
 
-Distributed under the MIT License. See LICENSE for more information.
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ### Acknowledgements
 
